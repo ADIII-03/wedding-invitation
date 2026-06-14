@@ -1,26 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Great+Vibes&family=Inter:wght@300;400;500;600;700&family=Yatra+One&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-serif: "Cinzel", "Playfair Display", serif;
+  --font-hindi: "Yatra One", "Inter", sans-serif;
+  --font-script: "Great Vibes", cursive;
+  --font-sans: "Inter", sans-serif;
+  
+  --color-gold-primary: #d4af37;
+  --color-gold-light: #f3e194;
+  --color-maroon-artistic: #5c0a0a;
+  --color-maroon-dark: #380404;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Custom radial gradient for gold metallic look, textured gold borders, and shimmering animations */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 0.5; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(0.95); opacity: 0.5; }
+}
+
+@keyframes drop-gold {
+  0% { transform: translateY(-20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.animate-shimmer {
+  background-image: linear-gradient(90deg, #d4af37 0%, #f3e194 25%, #ffe17d 50%, #d4af37 75%, #a17a18 100%);
+  background-size: 200% auto;
+  animation: shimmer 6s linear infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-text-gradient {
+  background: linear-gradient(135deg, #f3e194 0%, #d4af37 40%, #a17a18 70%, #f3e194 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.gold-bg-gradient {
+  background: linear-gradient(135deg, #f3e194 0%, #e6c252 25%, #d4af37 50%, #e6c252 75%, #a17a18 100%);
+}
+
+.gold-border {
+  border-image: linear-gradient(135deg, #f3e194, #d4af37, #a17a18, #f3e194) 1;
+}
+
+.gold-shadow {
+  box-shadow: 0 4px 20px -2px rgba(212, 175, 55, 0.25), 0 2px 8px -1px rgba(212, 175, 55, 0.15);
+}
+
+.animate-float-slow {
+  animation: float 4s ease-in-out infinite;
+}
+
+.bg-pattern {
+  background-image: radial-gradient(rgba(212, 175, 55, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Embossed fine texture overlay representing handmade artist card */
+.embossed-texture {
+  background-image: radial-gradient(#ffffff 1px, transparent 0);
+  background-size: 4px 4px;
+}
+
+/* Custom scrollbar for royal theme */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #380404;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#d4af37, #5c0a0a);
+  border-radius: 3px;
 }
