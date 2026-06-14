@@ -1,16 +1,11 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Music, Volume2, VolumeX, Sparkles, AlertCircle } from 'lucide-react';
-
-const SHEHNAI_URL = 'https://archive.org/download/ustadbismillahkhanshehnai/01.%20Kafi%20Dhun.mp3';
+import { Volume2, VolumeX, Sparkles } from 'lucide-react';
 
 export default function AudioPlayer() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [trackType, setTrackType] = useState<'shehnai' | 'synth'>('shehnai');
-  const [hasError, setHasError] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const oscillatorsRef = useRef<any[]>([]);
   const gainNodeRef = useRef<GainNode | null>(null);
@@ -19,7 +14,7 @@ export default function AudioPlayer() {
   // Traditional Raga Bhupali/Yaman-like notes (pentatonic, highly serene, meditative)
   const ragNotes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
 
-  // 1. Synth-based playback as a clean offline/network fallback
+  // Synth-based playback
   const startDrone = () => {
     stopSynth();
     try {
@@ -31,7 +26,7 @@ export default function AudioPlayer() {
 
       const mainGain = ctx.createGain();
       mainGain.gain.setValueAtTime(0, ctx.currentTime);
-      mainGain.gain.linearRampToValueAtTime(0.55, ctx.currentTime + 1.5); // Increased from 0.18
+      mainGain.gain.linearRampToValueAtTime(0.55, ctx.currentTime + 1.5);
       mainGain.connect(ctx.destination);
       gainNodeRef.current = mainGain;
 
@@ -59,7 +54,7 @@ export default function AudioPlayer() {
         filter.frequency.setValueAtTime(320 + (index * 80), ctx.currentTime);
         filter.Q.setValueAtTime(2, ctx.currentTime);
 
-        const vol = 0.16 / (index + 1); // Increased from 0.08
+        const vol = 0.16 / (index + 1);
         oscGain.gain.setValueAtTime(vol, ctx.currentTime);
 
         osc.connect(filter);
@@ -92,7 +87,7 @@ export default function AudioPlayer() {
         noteOsc.frequency.exponentialRampToValueAtTime(freq, now + 0.35);
 
         noteGain.gain.setValueAtTime(0, now);
-        noteGain.gain.linearRampToValueAtTime(0.48, now + 0.08); // Increased from 0.22
+        noteGain.gain.linearRampToValueAtTime(0.48, now + 0.08);
         noteGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
 
         noteFilter.type = 'bandpass';
@@ -169,97 +164,44 @@ export default function AudioPlayer() {
     }
   };
 
-  // 2. Playback Controllers
-  const playTraditionalAudio = () => {
-    // Stop any synth if running
-    stopSynth();
-
-    if (!audioRef.current) {
-      const audio = new Audio(SHEHNAI_URL);
-      audio.loop = true;
-      audio.volume = 0.75; // Increased shehnai volume from 0.35
-      
-      // Handle loading/error events dynamically
-      audio.addEventListener('error', (e) => {
-        console.warn("Shehnai MP3 failed to load from CDNs. Activating high-quality local synth fallback.", e);
-        setHasError(true);
-        setTrackType('synth');
-        // If we are supposed to be playing, start the synth
-        if (isPlaying) {
-          startDrone();
-        }
-      });
-
-      audioRef.current = audio;
-    }
-
-    setHasError(false);
-    audioRef.current.play().catch((err) => {
-      console.warn("Interactive play promise rejected. Browser autoplay policies may require user tap.", err);
-      // Fallback in case of CORS or media load block issues
-      setTrackType('synth');
-      startDrone();
-    });
-  };
-
-  const stopTraditionalAudio = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
-  };
-
   const handleToggle = () => {
     if (isPlaying) {
-      if (trackType === 'shehnai') {
-        stopTraditionalAudio();
-      } else {
-        stopSynth();
-      }
+      stopSynth();
       setIsPlaying(false);
     } else {
       setIsPlaying(true);
-      if (trackType === 'shehnai') {
-        playTraditionalAudio();
-      } else {
-        startDrone();
-      }
-    }
-  };
-
-  const handleTrackSwitch = (type: 'shehnai' | 'synth') => {
-    if (type === trackType) return;
-    
-    // Stop whatever is playing
-    if (isPlaying) {
-      if (trackType === 'shehnai') {
-        stopTraditionalAudio();
-      } else {
-        stopSynth();
-      }
-    }
-
-    setTrackType(type);
-
-    // If already playing, start the new track immediately
-    if (isPlaying) {
-      if (type === 'shehnai') {
-        playTraditionalAudio();
-      } else {
-        startDrone();
-      }
+      startDrone();
     }
   };
 
   useEffect(() => {
-    return () => {
-      stopSynth();
-      stopTraditionalAudio();
-      if (audioRef.current) {
-        audioRef.current.src = '';
-        audioRef.current = null;
+    if (isPlaying) {
+      startDrone();
+    }
+
+    const resumeAudio = () => {
+      if (isPlaying) {
+        if (audioCtxRef.current) {
+          if (audioCtxRef.current.state === 'suspended') {
+            audioCtxRef.current.resume().catch((e) => console.error(e));
+          }
+        } else {
+          startDrone();
+        }
       }
     };
-  }, []);
+
+    window.addEventListener('click', resumeAudio);
+    window.addEventListener('touchstart', resumeAudio);
+    window.addEventListener('scroll', resumeAudio);
+
+    return () => {
+      stopSynth();
+      window.removeEventListener('click', resumeAudio);
+      window.removeEventListener('touchstart', resumeAudio);
+      window.removeEventListener('scroll', resumeAudio);
+    };
+  }, [isPlaying]);
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3" id="wedding-audio-widget">
@@ -268,39 +210,7 @@ export default function AudioPlayer() {
         <div className="flex flex-col gap-1 items-end">
           <div className="bg-maroon-dark/95 border border-gold-primary/30 px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-2xl backdrop-blur-md text-xs font-serif text-gold-light animate-pulse">
             <Sparkles className="w-3.5 h-3.5 text-gold-primary animate-spin-slow" />
-            <span>
-              {trackType === 'shehnai' 
-                ? 'Playing Sacred Shehnai ॐ' 
-                : 'Playing Vedic Sitar Synth ॐ'
-              }
-            </span>
-          </div>
-          
-          {/* Track selector during playback to allow user choice */}
-          <div className="flex gap-1.5 bg-maroon-dark/90 border border-gold-primary/20 rounded-full p-0.5 shadow-lg backdrop-blur-sm self-end">
-            <button 
-              onClick={() => handleTrackSwitch('shehnai')}
-              disabled={hasError}
-              className={`px-2 py-0.5 text-[9px] font-serif rounded-full transition-all tracking-wider ${
-                trackType === 'shehnai' 
-                  ? 'bg-gold-primary text-maroon-dark font-semibold' 
-                  : 'text-gold-light/60 hover:text-gold-light disabled:opacity-40'
-              }`}
-              title={hasError ? "Shehnai offline" : "Switch to live Shehnai instrumental"}
-            >
-              Classic Shehnai
-            </button>
-            <button 
-              onClick={() => handleTrackSwitch('synth')}
-              className={`px-2 py-0.5 text-[9px] font-serif rounded-full transition-all tracking-wider ${
-                trackType === 'synth' 
-                  ? 'bg-gold-primary text-maroon-dark font-semibold' 
-                  : 'text-gold-light/60 hover:text-gold-light'
-              }`}
-              title="Switch to atmospheric Sitar synthesizer"
-            >
-              Vedic Sitar
-            </button>
+            <span>Playing Vedic Sitar Synth ॐ</span>
           </div>
         </div>
       )}
@@ -313,12 +223,11 @@ export default function AudioPlayer() {
             ? 'bg-gold-light border-gold-primary hover:bg-gold-primary' 
             : 'bg-gradient-to-br from-maroon-artistic to-maroon-dark border-gold-primary/80 hover:scale-105'
         }`}
-        title={isPlaying ? "Mute traditional wedding music" : "Play traditional wedding music"}
+        title={isPlaying ? "Mute wedding sitar synth" : "Play wedding sitar synth"}
         id="audio-toggle-btn"
       >
         {isPlaying ? (
           <>
-            {/* Elegant multi-ring decorative ripple resonance */}
             <span className="absolute inline-flex h-full w-full rounded-full bg-gold-primary opacity-20 animate-ping" />
             <span className="absolute inset-1 rounded-full border border-gold-primary/40 animate-[pulse-ring_2s_infinite]" />
             <Volume2 className="w-6 h-6 text-maroon-dark" />

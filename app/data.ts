@@ -122,7 +122,7 @@ export const mapLocations = {
   },
   reception: {
     name: 'Thahra Gopalpur, Samastipur, Bihar',
-    link: 'https://maps.google.com/?q=Thahra+Gopalpur,+Vaini,+Samastipur,+Bihar'
+    link: 'https://www.google.com/maps/place/25%C2%B055\'29.6%22N+85%C2%B040\'31.1%22E/@25.9253502,85.6737525,15.99z/data=!4m4!3m3!8m2!3d25.92488!4d85.67531?entry=ttu&g_ep=EgoyMDI2MDYxMC4wIKXMDSoASAFQAw%3D%3D'
   }
 };
 
