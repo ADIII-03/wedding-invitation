@@ -151,57 +151,8 @@ export default function BlessingsBoard() {
             </form>
           )}
 
-          {/* Elegant Traditional Shagun Card */}
-          <div className="mt-8 pt-6 border-t border-gold-primary/20 flex flex-col items-center w-full">
-            <div className="w-full bg-[#3d050c]/80 border border-gold-primary/30 rounded-2xl p-5 text-center gold-shadow relative overflow-hidden">
-              {/* Embossed fine texture overlay */}
-              <div className="absolute inset-0 bg-pattern opacity-30 pointer-events-none" />
-              
-              {/* Corner Ornaments */}
-              <div className="absolute top-1.5 left-1.5 w-3 h-3 border-t border-l border-gold-primary/50" />
-              <div className="absolute top-1.5 right-1.5 w-3 h-3 border-t border-r border-gold-primary/50" />
-              <div className="absolute bottom-1.5 left-1.5 w-3 h-3 border-b border-l border-gold-primary/50" />
-              <div className="absolute bottom-1.5 right-1.5 w-3 h-3 border-b border-r border-gold-primary/50" />
-
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-gold-primary" />
-                <h5 className="font-serif text-xs font-bold gold-text-gradient uppercase tracking-widest">
-                  पारंपरिक शगुन (Traditional Shagun)
-                </h5>
-                <Sparkles className="w-4 h-4 text-gold-primary" />
-              </div>
-              
-              <p className="text-[11px] text-gold-light/70 font-sans max-w-xs mx-auto mb-4 leading-relaxed">
-                If you wish to send your love and blessings as a token of shagun, you can scan the UPI QR code below.
-              </p>
-              
-              {/* QR Code Container with white/gold frame */}
-              <div className="inline-block p-3.5 bg-white rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-gold-primary/40 relative transform hover:scale-[1.02] transition-transform duration-300">
-                {/* Micro gold corner brackets inside the frame */}
-                <div className="absolute top-2 left-2 w-2 h-2 border-t-2 border-l-2 border-gold-primary/60" />
-                <div className="absolute top-2 right-2 w-2 h-2 border-t-2 border-r-2 border-gold-primary/60" />
-                <div className="absolute bottom-2 left-2 w-2 h-2 border-b-2 border-l-2 border-gold-primary/60" />
-                <div className="absolute bottom-2 right-2 w-2 h-2 border-b-2 border-r-2 border-gold-primary/60" />
-                
-              
-                <img 
-                  src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi%3A%2F%2Fpay%3Fpa%3Daradityaraman0518-1%40oksbi%26pn%3DAditya%2520Raman%26cu%3DINR"
-                  alt="Aditya Raman UPI QR Code"
-                  className="w-36 h-36 object-contain"
-                />
-              </div>
-
-              <div className="mt-4">
-                <span className="font-mono text-[10px] text-gold-light tracking-wide bg-maroon-dark/60 border border-gold-primary/10 px-2.5 py-1 rounded-full inline-block">
-                  UPI ID: <span className="text-gold-primary font-bold">aradityaraman0518-1@oksbi</span>
-                </span>
-                <span className="text-[9px] text-gold-light/40 font-sans block mt-2">
-                  Scan with GPay, PhonePe, Paytm, or any UPI app
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
+
       </div>
 
       <AnimatePresence>
